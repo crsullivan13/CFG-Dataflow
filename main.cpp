@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sys/stat.h>
 
+#include "driver.hpp"
+
 bool optionExsits(char** begin, char** end, std::string option) {
     return std::find(begin, end, option) != end;
 }
@@ -29,6 +31,7 @@ int main(int argc, char** argv) {
             bool optionsFail = false;
 
             const char* infile = getOptionInput(argv, argv + argc, "-i"); //Input file
+             const char* outdir = "\0";
 
             bool shouldOutputGraph = false; //We should only output graphs if the -g option exists
 
@@ -38,7 +41,7 @@ int main(int argc, char** argv) {
             } else if ( optionExsits(argv, argv + argc, "-g") ) { //Output dir
                 shouldOutputGraph = true;
 
-                const char* outdir = getOptionInput(argv, argv + argc, "-g");
+                outdir = getOptionInput(argv, argv + argc, "-g");
 
                 if ( *outdir == '\0' ) {
                     std::cout << "No outdir given, defaulting to \"out\"\n";
@@ -52,6 +55,8 @@ int main(int argc, char** argv) {
 
             if ( !optionsFail ) {
                 //Call analysis function, pass in in file/out dir/booleans
+                Driver drive{infile, outdir, shouldOutputGraph, shouldDoDataflow};
+                drive.run();
             } else {
                 std::cout << "Bad command line inputs, use -h option for help\n";
             }
