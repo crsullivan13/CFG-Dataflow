@@ -1,5 +1,7 @@
 #include "driver.hpp"
 
+#include <fstream>
+
 Driver::Driver() {
     mInFileName = "\0";
     mOutDirName = "out";
@@ -15,5 +17,7 @@ Driver::Driver(const char* inFileName, const char* outDirName, bool shouldOutput
 }
 
 void Driver::run() {
-    std::cout << "Running\n";
+    std::cout << "Running...\n"; //TODO: make this blocked by debug flag
+
+
 }
