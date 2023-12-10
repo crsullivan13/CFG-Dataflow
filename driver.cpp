@@ -1,4 +1,5 @@
 #include "driver.hpp"
+#include "cfg.hpp"
 
 #include <fstream>
 
@@ -23,6 +24,15 @@ void Driver::run() {
     if ( !inFile.is_open() ) {
         std::cerr << "Failed to open input file\n";
     } else {
-        
+        CFG myCfg("main");
+
+        Bbl myBlock(0);
+        myCfg.insertBlock(myBlock);
+        Bbl myBlock1(1);
+        myCfg.insertBlock(myBlock1);
+        myCfg.insertEdge(0, 1);
+        myCfg.printGraph();
+
+        inFile.close();
     }
 }

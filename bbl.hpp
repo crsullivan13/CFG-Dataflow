@@ -9,9 +9,9 @@ public:
     //Just learned about these initializer lists, also braced initalization, crazy stuff
     Bbl(int bblNumber, std::vector<int> successors = {}, std::vector<Instruction> instructions = {}) : mBblNumber(bblNumber), mSuccessors(successors), mInstructions(instructions) {}
 
-    void addSuccessor(int id) { mSuccessors.emplace_back(id); };
+    void addSuccessor(int id) { mSuccessors.push_back(id); };
     const std::vector<int> getSuccesors() { return mSuccessors; };
-    void addInstruction(Instruction instruction) { mInstructions.emplace_back(instruction); };
+    void addInstruction(Instruction instruction) { mInstructions.push_back(instruction); };
     const std::vector<Instruction> getInstructions() { return mInstructions; };
     const int getBblNumber() { return mBblNumber; }
 
