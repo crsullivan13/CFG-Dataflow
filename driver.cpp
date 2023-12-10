@@ -44,6 +44,7 @@ void Driver::run() {
             } else if ( tempInstr->getType() == InstructionType::CLOSING_BRACKET ) {
                 tempCfg->insertBlock(*tempBbl);
                 tempCfg->outputDigraph(mOutDirName);
+                mCfgs.push_back(*tempCfg);
             }
             //if global, add to glob list
             //if term, break block, set didBreak, extract destination(s), add Bbl to graph

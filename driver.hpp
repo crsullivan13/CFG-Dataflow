@@ -13,6 +13,8 @@ public:
     void run();
 
 private:
+    std::vector<CFG> mCfgs;
+
     const char* mInFileName;
     const char* mOutDirName;
     bool mShouldOutputGraph;
