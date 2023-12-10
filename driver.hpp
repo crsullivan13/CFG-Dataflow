@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "cfg.hpp"
+
 class Driver {
 public:
     Driver();

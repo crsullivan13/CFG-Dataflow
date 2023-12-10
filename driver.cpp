@@ -19,5 +19,10 @@ Driver::Driver(const char* inFileName, const char* outDirName, bool shouldOutput
 void Driver::run() {
     std::cout << "Running...\n"; //TODO: make this blocked by debug flag
 
-
+    std::ifstream inFile(mInFileName);
+    if ( !inFile.is_open() ) {
+        std::cerr << "Failed to open input file\n";
+    } else {
+        
+    }
 }
