@@ -17,6 +17,7 @@ enum class InstructionType {
     MUL,
     CALL,
     DEFINE,
+    CLOSING_BRACKET,
 
     NONE
 };
@@ -24,8 +25,10 @@ enum class InstructionType {
 class Instruction {
 public:
     Instruction();
-    Instruction(InstructionType type, int bblNumber);
+    Instruction(InstructionType type, int bblNumber = 0) : mType{type}, mBblNumber{bblNumber} {};
 
+    InstructionType getType() { return mType; };
+    virtual std::string getFuncName() { return "NA"; };
 protected:
     InstructionType mType = InstructionType::NONE;
     bool mIsTerm = false;
@@ -33,14 +36,14 @@ protected:
     int mBblNumber = 0;
 };
 
-class Alloca : Instruction {
+class Alloca : public Instruction {
 public:
 
 private:
     bool mIsTerm = false;
 };
 
-class Load : Instruction {
+class Load : public Instruction {
 public:
     Load(InstructionType type, std::string address, std::string dest, int bblNumber);
 
@@ -51,7 +54,7 @@ private:
     int mBblNumber;
 };
 
-class Store : Instruction {
+class Store : public Instruction {
 public:
     Store(InstructionType type, std::string address, int bblNumber);
 
@@ -62,7 +65,7 @@ private:
     int mBblNumber;
 };
 
-class Ret : Instruction {
+class Ret : public Instruction {
 public:
     Ret(InstructionType type, std::string op1, int bblNumber);
 
@@ -72,7 +75,7 @@ private:
     int mBblNumber;
 };
 
-class Icmp : Instruction {
+class Icmp : public Instruction {
 public:
     Icmp(InstructionType type, std::string dest, int bblNumber);
 
@@ -82,7 +85,7 @@ private:
     int mBblNumber;
 };
 
-class Br : Instruction {
+class Br : public Instruction {
 public:
     Br(InstructionType type, std::string target1, std::string target2, int bblNumber);
 
@@ -93,7 +96,7 @@ private:
     int mBblNumber;
 };
 
-class Arithmetic : Instruction {
+class Arithmetic : public Instruction {
 public:
     Arithmetic(InstructionType type, std::string dest, std::string op1, std::string op2, int bblNumber);
 
@@ -105,7 +108,7 @@ private:
     int mBblNumber;
 };
 
-class Call : Instruction {
+class Call : public Instruction {
 public:
     Call(InstructionType type, std::vector<std::string> params, int bblNumber);
 
@@ -115,10 +118,11 @@ private:
     int mBblNumber;
 };
 
-class Define : Instruction {
+class Define : public Instruction {
 public:
     Define(InstructionType type, std::string funcName, int bblNumber);
 
+    std::string getFuncName() { return mFuncName; };
 private:
     bool mIsTerm = false;
     std::string mFuncName;

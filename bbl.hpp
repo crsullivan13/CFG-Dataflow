@@ -7,7 +7,7 @@
 class Bbl {
 public:
     //Just learned about these initializer lists, also braced initalization, crazy stuff
-    Bbl(int bblNumber, std::vector<int> successors = {}, std::vector<Instruction> instructions = {}) : mBblNumber(bblNumber), mSuccessors(successors), mInstructions(instructions) {}
+    Bbl(int bblNumber, std::vector<int> successors = {}, std::vector<Instruction> instructions = {}) : mBblNumber{bblNumber}, mSuccessors{successors}, mInstructions{instructions} {}
 
     void addSuccessor(int id) { mSuccessors.push_back(id); };
     const std::vector<int> getSuccesors() { return mSuccessors; };

@@ -7,13 +7,6 @@ Instruction::Instruction() {
     mBblNumber = 0;
 }
 
-Instruction::Instruction(InstructionType type, int bblNumber) {
-    mType = type;
-    mIsLead = false;
-    mIsTerm = false;
-    mBblNumber = bblNumber;
-}
-
 Load::Load(InstructionType type, std::string address, std::string dest, int bblNumber) {
     mType = type;
     mAddress = address;
