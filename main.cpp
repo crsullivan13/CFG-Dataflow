@@ -45,7 +45,8 @@ int main(int argc, char** argv) {
 
                 if ( *outdir == '\0' ) {
                     std::cout << "No outdir given, defaulting to \"out\"\n";
-                    mkdir("out", 0777);
+                    outdir = "out";
+                    mkdir(outdir, 0777);
                 } else {
                     mkdir(outdir, 0777);
                 }

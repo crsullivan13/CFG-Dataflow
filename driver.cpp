@@ -31,7 +31,7 @@ void Driver::run() {
         Bbl myBlock1(1);
         myCfg.insertBlock(myBlock1);
         myCfg.insertEdge(0, 1);
-        myCfg.printGraph();
+        myCfg.outputDigraph(mOutDirName);
 
         inFile.close();
     }

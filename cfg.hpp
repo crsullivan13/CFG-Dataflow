@@ -13,6 +13,7 @@ public:
     void insertBlock(Bbl block);
 
     void printGraph();
+    void outputDigraph(std::string outDir);
 
 private:
     std::string mFuncName;
