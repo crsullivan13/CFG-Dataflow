@@ -34,6 +34,10 @@ public:
 
     virtual std::string getTgt1() { return ""; };
     virtual std::string getTgt2() { return ""; };
+
+    virtual std::string getLbl() { return ""; };
+    int getBblNum() { return mBblNumber; };
+    void setBblNum(int num) { mBblNumber = num; };
 protected:
     InstructionType mType;
     bool mIsTerm;
@@ -41,11 +45,13 @@ protected:
     int mBblNumber;
 };
 
-class Label : public Instruction {
+class LabelInstr : public Instruction {
 public:
+    LabelInstr(InstructionType type, std::string name, int bblNumber);
 
+    std::string getLbl() { return mName; };
 private:
-    std::string name;
+    std::string mName;
     int mBblNumber;
 };
 

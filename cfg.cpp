@@ -27,13 +27,15 @@ void CFG::outputDigraph(std::string outDir) {
     if ( outFile.is_open() ) {
         outFile << "digraph {\n";
         for ( Bbl block : mBlocks ) {
+            int successorCount = 1;
             std::string nodeName = "Node" + std::to_string(block.getBblNumber());
             outFile << "\t" << nodeName << " [shape=record,label=\"\"]\n";
             for ( int successor : block.getSuccesors() ) {
-                outFile << "\t" << nodeName << " -> " << "Node" << successor << "[label=" << successor <<"];\n";
+                outFile << "\t" << nodeName << " -> " << "Node" << successor << " [label=" << successorCount <<"];\n";
+                successorCount += 1;
             }
         }
-        outFile << "}\n";
+        outFile << "}";
 
         outFile.close();
     } else {

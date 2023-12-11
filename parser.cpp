@@ -11,6 +11,11 @@ Instruction* Parser::parseLine(std::string line, int num) {
     }
     std::string trimmed = line.substr(index, line.size());
 
+    if ( trimmed.find(':') != std::string::npos ) {
+        instr = parseLabel(trimmed, num);
+        return instr;
+    }
+
     switch ( trimmed[0] )
     {
     case 'd': {
@@ -112,6 +117,22 @@ Instruction* Parser::parseAssign(std::string line, int num) {
 
     return instr;
 }
+
+
+Instruction* Parser::parseLabel(std::string line, int num) {
+    Instruction* instr;
+    std::string temp;
+
+    for ( char c : line ) {
+        if ( c != ':' ) {
+            temp += c;
+        }
+    }
+
+    instr = new LabelInstr{InstructionType::LABEL, temp, num};
+    return instr;
+}
+
 
 std::vector<std::string> Parser::getBranchDests(std::string line) {
     std::vector<std::string> tokens;

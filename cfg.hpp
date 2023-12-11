@@ -6,11 +6,6 @@
 
 #include "bbl.hpp"
 
-struct Label {
-    std::string name;
-    int bblNumber;
-};
-
 class CFG {
 public:
     CFG(std::string funcName) : mFuncName(funcName) {};

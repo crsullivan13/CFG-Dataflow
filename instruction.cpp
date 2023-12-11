@@ -7,6 +7,12 @@ Instruction::Instruction() {
     mBblNumber = 0;
 }
 
+LabelInstr::LabelInstr(InstructionType type, std::string name, int bblNumber) {
+    mType = type;
+    mName = name;
+    mBblNumber = bblNumber;
+}
+
 Load::Load(InstructionType type, std::string address, std::string dest, int bblNumber) {
     mType = type;
     mAddress = address;

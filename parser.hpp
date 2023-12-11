@@ -12,6 +12,7 @@ public:
     Instruction* parseLine(std::string line, int num);
 private:
     Instruction* parseAssign(std::string line, int num);
+    Instruction* parseLabel(std::string line, int num);
     std::string getFuncName(std::string line);
     std::string getRetVal(std::string line);
     std::string getDest(std::string line);
