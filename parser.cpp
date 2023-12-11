@@ -1,5 +1,7 @@
 #include "parser.hpp"
 
+#include <sstream>
+
 Instruction* Parser::parseLine(std::string line, int num) {
     Instruction* instr;
     
@@ -50,7 +52,31 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         instr = new Call{InstructionType::CALL, params, num};
         }
         break;
-    
+    case 'a': {
+        std::vector<std::string> args = getArgs(line);
+        instr = new Arithmetic{InstructionType::ADD, args[0], args[1], args[2], num};
+        }
+        break;
+    case 'm': {
+        std::vector<std::string> args = getArgs(line);
+        instr = new Arithmetic{InstructionType::MUL, args[0], args[1], args[2], num};
+        }
+        break;
+    case 's': {
+            if ( line[index+1] == 'u' ) {
+                std::vector<std::string> args = getArgs(line);
+                instr = new Arithmetic{InstructionType::SUB, args[0], args[1], args[2], num};
+            } else if ( line[index+1] == 'd' ) {
+                std::vector<std::string> args = getArgs(line);
+                instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
+            }
+        }
+        break;
+    case 'u': {
+        std::vector<std::string> args = getArgs(line);
+        instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }
@@ -58,6 +84,35 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     }
 
     return instr;
+}
+
+std::vector<std::string> Parser::getArgs(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    args.push_back(tokens[0].substr(1, tokens[0].size()));
+
+    if ( tokens[4][0] == '%' ) {
+        tokens[4] = tokens[4].substr(1, tokens[4].size()-2);
+    } else {
+        tokens[4] = tokens[4].substr(0, tokens[4].size()-1);
+    }
+    args.push_back(tokens[4]);
+
+    if ( tokens[5][0] == '%' ) {
+        tokens[5] = tokens[5].substr(1, tokens[5].size());
+    }
+    args.push_back(tokens[5]);
+
+    //std::cout << args[0] << " " << args[1] << " " << args[2] << " " << "\n";
+    return args;
 }
 
 std::string Parser::getFuncName(std::string line) {
@@ -73,6 +128,9 @@ std::string Parser::getFuncName(std::string line) {
 
 std::string Parser::getRetVal(std::string line) {
     size_t index = line.find('%');
+    if ( index == std::string::npos ) {
+        return "";
+    }
     std::string retVal;
 
     for (size_t i = index+1; i < line.size(); i++ ) {

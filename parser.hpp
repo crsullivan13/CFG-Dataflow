@@ -15,6 +15,7 @@ private:
     std::string getFuncName(std::string line);
     std::string getRetVal(std::string line);
     std::vector<std::string> getParams(std::string line);
+    std::vector<std::string> getArgs(std::string line);
 
 };
 
