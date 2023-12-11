@@ -53,28 +53,34 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         }
         break;
     case 'a': {
-        std::vector<std::string> args = getArgs(line);
+        std::vector<std::string> args = getArithArgs(line);
         instr = new Arithmetic{InstructionType::ADD, args[0], args[1], args[2], num};
         }
         break;
     case 'm': {
-        std::vector<std::string> args = getArgs(line);
+        std::vector<std::string> args = getArithArgs(line);
         instr = new Arithmetic{InstructionType::MUL, args[0], args[1], args[2], num};
         }
         break;
     case 's': {
             if ( line[index+1] == 'u' ) {
-                std::vector<std::string> args = getArgs(line);
+                std::vector<std::string> args = getArithArgs(line);
                 instr = new Arithmetic{InstructionType::SUB, args[0], args[1], args[2], num};
             } else if ( line[index+1] == 'd' ) {
-                std::vector<std::string> args = getArgs(line);
+                std::vector<std::string> args = getArithArgs(line);
                 instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
             }
         }
         break;
     case 'u': {
-        std::vector<std::string> args = getArgs(line);
+        std::vector<std::string> args = getArithArgs(line);
         instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
+        }
+        break;
+    case 'i': {
+        std::string dest = getDest(line);
+        std::cout << dest << "\n";
+        instr = new Icmp{InstructionType::ICMP, dest, num};
         }
         break;
     default: {
@@ -86,7 +92,20 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     return instr;
 }
 
-std::vector<std::string> Parser::getArgs(std::string line) {
+std::string Parser::getDest(std::string line) {
+    std::vector<std::string> tokens;
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);        
+    }
+
+    return tokens[0].substr(1, tokens[0].size());
+}
+
+std::vector<std::string> Parser::getArithArgs(std::string line) {
     std::vector<std::string> tokens;
     std::vector<std::string> args;
     std::string temp;
