@@ -46,6 +46,12 @@ Instruction* Parser::parseLine(std::string line, int num) {
         instr = new Br{InstructionType::BR, dests[0], dests[1], num};
         }
         break;
+    case 'c': {
+        std::vector<std::string> params = getParams(trimmed);
+        std::string name = getFuncName(trimmed);
+        instr = new Call{InstructionType::CALL, name, params, num};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }

@@ -3,7 +3,12 @@
 #include <fstream>
 
 void CFG::insertEdge(int sourceId, int successorId) {
-    mBlocks[sourceId].addSuccessor(successorId);
+    for ( Bbl& block : mBlocks ) {
+        if ( block.getBblNumber() == sourceId ) {
+            block.addSuccessor(successorId);
+            break;
+        }
+    }
 }
 
 void CFG::insertBlock(Bbl block) {
@@ -11,7 +16,7 @@ void CFG::insertBlock(Bbl block) {
 }
 
 void CFG::printGraph() {
-    for ( Bbl block : mBlocks ) {
+    for ( Bbl& block : mBlocks ) {
         std::cout << "Block " << block.getBblNumber() << " -> ";
         for ( int successor : block.getSuccesors() ) {
             std::cout << successor << ",";
@@ -26,7 +31,7 @@ void CFG::outputDigraph(std::string outDir) {
 
     if ( outFile.is_open() ) {
         outFile << "digraph {\n";
-        for ( Bbl block : mBlocks ) {
+        for ( Bbl& block : mBlocks ) {
             int successorCount = 1;
             std::string nodeName = "Node" + std::to_string(block.getBblNumber());
             outFile << "\t" << nodeName << " [shape=record,label=\"\"]\n";

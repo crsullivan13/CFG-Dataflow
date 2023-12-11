@@ -47,12 +47,15 @@ void Driver::run() {
                 }
                 tempBbl = new Bbl(temp);
                 didBreak = false;
+            } else if ( didBreak && tempType != InstructionType::NONE ) {
+                tempBbl = new Bbl(tempCfg->getBblCount());
             }
 
             if ( tempType == InstructionType::DEFINE ) {
                 tempCfg = new CFG(tempInstr->getFuncName());
                 tempBbl = new Bbl(0);
                 tempBbl->addInstruction(*tempInstr);
+                didBreak = false;
             } else if ( tempType == InstructionType::CLOSING_BRACKET ) {
                 if ( !didBreak ) {
                     tempCfg->insertBlock(*tempBbl);
