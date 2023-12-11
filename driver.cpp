@@ -61,7 +61,11 @@ void Driver::run() {
                     tempCfg->insertBlock(*tempBbl);
                     didBreak = false;
                 }
-                tempCfg->outputDigraph(mOutDirName);
+
+                if ( mShouldOutputGraph ) {
+                    tempCfg->outputDigraph(mOutDirName);
+                }
+                
                 mCfgs.push_back(*tempCfg);
             } else if ( tempType == InstructionType::BR || tempType == InstructionType::RET || tempType == InstructionType::CALL ) {
                 didBreak = true;
