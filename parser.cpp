@@ -36,6 +36,11 @@ Instruction* Parser::parseLine(std::string line, int num) {
         instr = new Store{InstructionType::STORE, args[1], args[0], num};
         }
         break;
+    case 'b': {
+        std::vector<std::string> dests = getBranchDests(trimmed);
+        instr = new Br{InstructionType::BR, dests[0], dests[1], num};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }
@@ -106,6 +111,31 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     }
 
     return instr;
+}
+
+std::vector<std::string> Parser::getBranchDests(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> dests;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    if ( tokens.size() == 3 ) {
+        dests.push_back(tokens[2].substr(1, tokens[2].size()));
+        dests.push_back("");
+        std::cout << dests[0] << "\n";
+    } else if ( tokens.size() == 7 ) {
+        dests.push_back(tokens[4].substr(1, tokens[4].size()-2));
+        dests.push_back(tokens[6].substr(1, tokens[6].size()));
+        std::cout << dests[0] << " " << dests[1] << "\n";
+    }
+
+    return dests;
 }
 
 std::string Parser::getAllocDest(std::string line) {

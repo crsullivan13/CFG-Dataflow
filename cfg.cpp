@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-void CFG::insertEdge(int successorId, int sourceId) {
-    mBlocks[successorId].addSuccessor(sourceId);
+void CFG::insertEdge(int sourceId, int successorId) {
+    mBlocks[sourceId].addSuccessor(successorId);
 }
 
 void CFG::insertBlock(Bbl block) {

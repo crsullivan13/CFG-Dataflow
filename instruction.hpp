@@ -18,6 +18,7 @@ enum class InstructionType {
     CALL,
     DEFINE,
     CLOSING_BRACKET,
+    LABEL,
 
     NONE
 };
@@ -28,12 +29,23 @@ public:
     Instruction(InstructionType type, int bblNumber = 0) : mType{type}, mBblNumber{bblNumber} {};
 
     InstructionType getType() { return mType; };
-    virtual std::string getFuncName() { return "NA"; };
+    virtual std::string getFuncName() { return ""; };
     virtual bool isTerm() { return false; };
+
+    virtual std::string getTgt1() { return ""; };
+    virtual std::string getTgt2() { return ""; };
 protected:
     InstructionType mType;
     bool mIsTerm;
     bool mIsLead;
+    int mBblNumber;
+};
+
+class Label : public Instruction {
+public:
+
+private:
+    std::string name;
     int mBblNumber;
 };
 
@@ -94,6 +106,8 @@ class Br : public Instruction {
 public:
     Br(InstructionType type, std::string target1, std::string target2, int bblNumber);
 
+    std::string getTgt1() { return mTarget1; };
+    std::string getTgt2() { return mTarget2; };
 private:
     bool mIsTerm = true;
     std::string mTarget1;

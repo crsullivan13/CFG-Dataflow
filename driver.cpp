@@ -58,8 +58,26 @@ void Driver::run() {
                 didBreak = true;
 
                 if ( tempType == InstructionType::BR ) {
-                    //get destinations
-                    //add to labels list (i.e. search it, if not already in, add and assign a bblNum to the label)
+                    tempBbl->addInstruction(*tempInstr);
+                    tempCfg->insertBlock(*tempBbl);
+
+                    std::string tgt1 = tempInstr->getTgt1();
+                    int temp = tempCfg->findLabel(tempInstr->getTgt1());
+                    if ( temp == -1 ) {
+                        temp = tempCfg->incBblCount();
+                        tempCfg->addLabel(tgt1, temp);
+                    }
+                    tempCfg->insertEdge(tempBbl->getBblNumber(), temp);
+
+                    std::string tgt2 = tempInstr->getTgt2();
+                    if ( !tgt2.empty() ) {
+                        temp = tempCfg->findLabel(tempInstr->getTgt2());
+                        if ( temp == -1 ) {
+                            temp = tempCfg->incBblCount();
+                            tempCfg->addLabel(tgt2, temp);
+                        }
+                        tempCfg->insertEdge(tempBbl->getBblNumber(), temp);
+                    }
                 } else if ( tempType == InstructionType::RET ) {
                     tempBbl->addInstruction(*tempInstr);
                     tempCfg->insertBlock(*tempBbl);
@@ -69,6 +87,7 @@ void Driver::run() {
                     tempCfg->insertEdge(tempBbl->getBblNumber(), tempCfg->incBblCount());
                 }
             } else if ( tempType != InstructionType::NONE ) {
+                didBreak = false;
                 tempBbl->addInstruction(*tempInstr);
             }
             //if global, add to glob list

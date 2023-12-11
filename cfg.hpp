@@ -24,6 +24,15 @@ public:
     int getBblCount() { return mBblCount; };
     int incBblCount() { mBblCount+=1; return mBblCount; };
 
+    void addLabel(std::string name, int num) { mLabels.insert({name, num}); };
+    int findLabel(std::string name) {
+        if ( mLabels.find(name) != mLabels.end() ) {
+            return mLabels[name];
+        } else {
+            return -1;
+        }
+    };
+
 private:
     std::string mFuncName;
     std::vector<Bbl> mBlocks = {};
