@@ -22,7 +22,7 @@ public:
     void outputDigraph(std::string outDir);
 
     int getBblCount() { return mBblCount; };
-    int incBblCount() { return ++mBblCount; };
+    int incBblCount() { mBblCount+=1; return mBblCount; };
 
 private:
     std::string mFuncName;

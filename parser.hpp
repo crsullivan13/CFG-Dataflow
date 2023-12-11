@@ -11,7 +11,10 @@ public:
 
     Instruction* parseLine(std::string line, int num);
 private:
+    Instruction* parseAssign(std::string line, int num);
     std::string getFuncName(std::string line);
+    std::string getRetVal(std::string line);
+    std::vector<std::string> getParams(std::string line);
 
 };
 

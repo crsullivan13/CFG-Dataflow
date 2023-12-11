@@ -30,27 +30,47 @@ void Driver::run() {
         Instruction* tempInstr;
         CFG* tempCfg = nullptr;
         Bbl* tempBbl = nullptr;
+        bool didBreak = false;
 
         Parser myParse{};
         while ( std::getline(inFile, currLine) ) {
             tempInstr = myParse.parseLine(currLine, tempCfg ? tempCfg->getBblCount() : 0);
+            InstructionType tempType = tempInstr->getType();
 
-            //tempInstr->operate(cfg, bbl, globList);
-            //if is define -> start new CFG
-            if ( tempInstr->getType() == InstructionType::DEFINE ) {
+            //tempInstr->operate(cfg, bbl, globList); probably a cleaner way, but I'm hacking for now
+
+            if ( didBreak && tempType != InstructionType::NONE ) {
+                tempBbl = new Bbl(tempCfg->getBblCount());
+            }
+
+            if ( tempType == InstructionType::DEFINE ) {
                 tempCfg = new CFG(tempInstr->getFuncName());
                 tempBbl = new Bbl(0);
                 tempBbl->addInstruction(*tempInstr);
-            } else if ( tempInstr->getType() == InstructionType::CLOSING_BRACKET ) {
-                tempCfg->insertBlock(*tempBbl);
+            } else if ( tempType == InstructionType::CLOSING_BRACKET ) {
+                if ( !didBreak ) {
+                    tempCfg->insertBlock(*tempBbl);
+                    didBreak = false;
+                }
                 tempCfg->outputDigraph(mOutDirName);
                 mCfgs.push_back(*tempCfg);
+            } else if ( tempType == InstructionType::BR || tempType == InstructionType::RET || tempType == InstructionType::CALL ) {
+                didBreak = true;
+
+                if ( tempType == InstructionType::BR ) {
+                    //get destinations
+                    //add to labels list (i.e. search it, if not already in, add and assign a bblNum to the label)
+                } else if ( tempType == InstructionType::RET ) {
+                    tempBbl->addInstruction(*tempInstr);
+                    tempCfg->insertBlock(*tempBbl);
+                } else if ( tempType == InstructionType::CALL ) {
+                    tempBbl->addInstruction(*tempInstr);
+                    tempCfg->insertBlock(*tempBbl);
+                    tempCfg->insertEdge(tempBbl->getBblNumber(), tempCfg->incBblCount());
+                }
             }
             //if global, add to glob list
-            //if term, break block, set didBreak, extract destination(s), add Bbl to graph
-            //if didBreak is set, start new Bbl
             //otherwise just add instruction to Bbl list
-            //if } -> end CFG, add last Bbl to graph
         }
 
         inFile.close();

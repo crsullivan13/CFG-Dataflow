@@ -51,6 +51,7 @@ Call::Call(InstructionType type, std::vector<std::string> params, int bblNumber)
     mType = type;
     mParams = params;
     mBblNumber = bblNumber;
+    mIsTerm = true;
 }
 
 Define::Define(InstructionType type, std::string funcName, int bblNumber) {

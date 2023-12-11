@@ -29,11 +29,12 @@ public:
 
     InstructionType getType() { return mType; };
     virtual std::string getFuncName() { return "NA"; };
+    virtual bool isTerm() { return false; };
 protected:
-    InstructionType mType = InstructionType::NONE;
-    bool mIsTerm = false;
-    bool mIsLead = false;
-    int mBblNumber = 0;
+    InstructionType mType;
+    bool mIsTerm;
+    bool mIsLead;
+    int mBblNumber;
 };
 
 class Alloca : public Instruction {
@@ -114,7 +115,7 @@ public:
 
 private:
     std::vector<std::string> mParams;
-    bool mIsTerm = true;
+    bool mIsTerm;
     int mBblNumber;
 };
 
