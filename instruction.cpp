@@ -7,6 +7,12 @@ Instruction::Instruction() {
     mBblNumber = 0;
 }
 
+Global::Global(InstructionType type, std::string name, std::string value) {
+    mType = type;
+    mName = name;
+    mValue = value;
+}
+
 LabelInstr::LabelInstr(InstructionType type, std::string name, int bblNumber) {
     mType = type;
     mName = name;

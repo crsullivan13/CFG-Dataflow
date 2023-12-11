@@ -52,6 +52,11 @@ Instruction* Parser::parseLine(std::string line, int num) {
         instr = new Call{InstructionType::CALL, name, params, num};
         }
         break;
+    case '@': {
+        std::vector<std::string> args = parseGlob(trimmed);
+        instr = new Global{InstructionType::GLOBAL, args[0], args[1]};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }
@@ -106,7 +111,7 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         break;
     case 'i': {
         std::string dest = getDest(line);
-        std::cout << dest << "\n";
+        //std::cout << dest << "\n";
         instr = new Icmp{InstructionType::ICMP, dest, num};
         }
         break;
@@ -124,6 +129,29 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     return instr;
 }
 
+
+std::vector<std::string> Parser::parseGlob(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    args.push_back(tokens[0].substr(1, tokens[0].size()));
+
+    if ( tokens[4][0] == '%' ) {
+        args.push_back(tokens[4].substr(1, tokens[4].size()-2));
+    } else {
+        args.push_back(tokens[4].substr(0, tokens[4].size()-1));
+    }
+    
+    return args;
+}
 
 Instruction* Parser::parseLabel(std::string line, int num) {
     Instruction* instr;
@@ -155,11 +183,11 @@ std::vector<std::string> Parser::getBranchDests(std::string line) {
     if ( tokens.size() == 3 ) {
         dests.push_back(tokens[2].substr(1, tokens[2].size()));
         dests.push_back("");
-        std::cout << dests[0] << "\n";
+        //std::cout << dests[0] << "\n";
     } else if ( tokens.size() == 7 ) {
         dests.push_back(tokens[4].substr(1, tokens[4].size()-2));
         dests.push_back(tokens[6].substr(1, tokens[6].size()));
-        std::cout << dests[0] << " " << dests[1] << "\n";
+        //std::cout << dests[0] << " " << dests[1] << "\n";
     }
 
     return dests;
@@ -172,7 +200,7 @@ std::string Parser::getAllocDest(std::string line) {
         dest += line[i];
     }
 
-    std::cout << dest << "\n";
+    //std::cout << dest << "\n";
     return dest; 
 }
 
@@ -196,7 +224,7 @@ std::vector<std::string> Parser::getStoreArgs(std::string line) {
     args.push_back(tokens[2]);
     args.push_back(tokens[4].substr(1, tokens[4].size()-2));
 
-    std::cout << args[0] << " " << args[1] <<"\n";
+    //std::cout << args[0] << " " << args[1] <<"\n";
     return args;
 }
 
@@ -215,7 +243,7 @@ std::vector<std::string> Parser::getLoadArgs(std::string line) {
     args.push_back(tokens[0].substr(1, tokens[0].size()));
     args.push_back(tokens[5].substr(1, tokens[5].size()-2));
 
-    std::cout << args[0] << " " << args[1] << "\n";
+    //std::cout << args[0] << " " << args[1] << "\n";
     return args;
 }
 
@@ -257,7 +285,7 @@ std::vector<std::string> Parser::getArithArgs(std::string line) {
     }
     args.push_back(tokens[5]);
 
-    std::cout << args[0] << " " << args[1] << " " << args[2] << " " << "\n";
+    //std::cout << args[0] << " " << args[1] << " " << args[2] << " " << "\n";
     return args;
 }
 
@@ -269,7 +297,7 @@ std::string Parser::getFuncName(std::string line) {
         name += line[i];
     }
 
-    std::cout << name << "\n";
+    //std::cout << name << "\n";
     return name;
 }
 
@@ -286,7 +314,7 @@ std::string Parser::getRetVal(std::string line) {
 
     temp = tokens[2][0] == '%' ? tokens[2].substr(1, tokens[2].size()) : tokens[2];
 
-    std::cout << temp << "\n";
+    //std::cout << temp << "\n";
     return temp;
 }
 
@@ -316,11 +344,11 @@ std::vector<std::string> Parser::getParams(std::string line) {
 
     if ( params.size() != 0 ) {
         for ( size_t i = 0; i < params.size(); i++ ) {
-            std::cout << params[i] << " ";
+            //std::cout << params[i] << " ";
         }
-        std::cout << "\n";
+        //std::cout << "\n";
     } else {
-        std::cout << "No args\n";
+        //std::cout << "No args\n";
     }
 
     return params;

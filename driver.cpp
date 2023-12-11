@@ -30,6 +30,7 @@ void Driver::run() {
         Instruction* tempInstr;
         CFG* tempCfg = nullptr;
         Bbl* tempBbl = nullptr;
+        std::vector<Instruction> globList = {};
         bool didBreak = false;
 
         Parser myParse{};
@@ -65,7 +66,7 @@ void Driver::run() {
                 if ( mShouldOutputGraph ) {
                     tempCfg->outputDigraph(mOutDirName);
                 }
-                
+                tempCfg->addGlobals(globList);
                 mCfgs.push_back(*tempCfg);
             } else if ( tempType == InstructionType::BR || tempType == InstructionType::RET || tempType == InstructionType::CALL ) {
                 didBreak = true;
@@ -99,13 +100,15 @@ void Driver::run() {
                     tempCfg->insertBlock(*tempBbl);
                     tempCfg->insertEdge(tempBbl->getBblNumber(), tempCfg->incBblCount());
                 }
+            } else if ( tempType == InstructionType::GLOBAL ) {
+                globList.push_back(*tempInstr);
             } else if ( tempType != InstructionType::NONE ) {
                 didBreak = false;
                 tempBbl->addInstruction(*tempInstr);
             }
-            //if global, add to glob list
-            //otherwise just add instruction to Bbl list
         }
+
+        //Do dataflow analysis
 
         inFile.close();
     }

@@ -19,6 +19,8 @@ public:
     int getBblCount() { return mBblCount; };
     int incBblCount() { mBblCount+=1; return mBblCount; };
 
+    void addGlobals(std::vector<Instruction> globs) { globList = globs; };
+
     void addLabel(std::string name, int num) { mLabels.insert({name, num}); };
     int findLabel(std::string name) {
         if ( mLabels.find(name) != mLabels.end() ) {
@@ -29,6 +31,7 @@ public:
     };
 
 private:
+    std::vector<Instruction> globList;
     std::string mFuncName;
     std::vector<Bbl> mBlocks = {};
     std::map<std::string, int> mLabels = {};
