@@ -49,7 +49,7 @@ Instruction* Parser::parseLine(std::string line, int num) {
     case 'c': {
         std::vector<std::string> params = getParams(trimmed);
         std::string name = getFuncName(trimmed);
-        instr = new Call{InstructionType::CALL, name, params, num};
+        instr = new Call{InstructionType::CALL, name, params, "", num};
         }
         break;
     case '@': {
@@ -76,7 +76,8 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     case 'c': {
         std::vector<std::string> params = getParams(line);
         std::string name = getFuncName(line);
-        instr = new Call{InstructionType::CALL, name, params, num};
+        std::string dest = getAllocDest(line); //spahget1
+        instr = new Call{InstructionType::CALL, name, params, dest, num};
         }
         break;
     case 'a': {
@@ -293,7 +294,7 @@ std::string Parser::getFuncName(std::string line) {
     size_t index = line.find('@');
     std::string name;
 
-    for (size_t i = index+1; line[i] != '('; i++) {
+    for (size_t i = index+1; line[i] != '(' && line[i] != ' '; i++) {
         name += line[i];
     }
 

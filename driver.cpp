@@ -41,10 +41,10 @@ void Driver::run() {
             //tempInstr->operate(cfg, bbl, globList); probably a cleaner way, but I'm hacking for now
 
             if ( didBreak && tempType == InstructionType::LABEL ) {
-                int temp = tempCfg->findLabel(tempInstr->getLbl());
+                int temp = tempCfg->findLabel(tempInstr->getName());
                 if ( temp == -1 ) {
                     temp = tempCfg->incBblCount();
-                    tempCfg->addLabel(tempInstr->getLbl(), temp);
+                    tempCfg->addLabel(tempInstr->getName(), temp);
                 }
                 tempBbl = new Bbl(temp);
                 didBreak = false;
@@ -53,7 +53,7 @@ void Driver::run() {
             }
 
             if ( tempType == InstructionType::DEFINE ) {
-                tempCfg = new CFG(tempInstr->getFuncName());
+                tempCfg = new CFG(tempInstr->getName());
                 tempBbl = new Bbl(0);
                 tempBbl->addInstruction(*tempInstr);
                 didBreak = false;

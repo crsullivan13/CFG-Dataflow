@@ -60,12 +60,12 @@ Arithmetic::Arithmetic(InstructionType type, std::string dest, std::string op1, 
     mBblNumber = bblNumber;
 }
 
-Call::Call(InstructionType type, std::string funcName, std::vector<std::string> params, int bblNumber) {
+Call::Call(InstructionType type, std::string funcName, std::vector<std::string> params, std::string dest, int bblNumber) {
     mType = type;
     mParams = params;
     mBblNumber = bblNumber;
-    mIsTerm = true;
     mFuncName = funcName;
+    mDest = dest;
 }
 
 Define::Define(InstructionType type, std::string funcName, int bblNumber) {

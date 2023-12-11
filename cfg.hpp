@@ -5,7 +5,6 @@
 #include <map>
 
 #include "bbl.hpp"
-#include "factset.hpp"
 
 class CFG {
 public:
