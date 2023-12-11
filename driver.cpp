@@ -68,6 +68,8 @@ void Driver::run() {
                     tempCfg->insertBlock(*tempBbl);
                     tempCfg->insertEdge(tempBbl->getBblNumber(), tempCfg->incBblCount());
                 }
+            } else if ( tempType != InstructionType::NONE ) {
+                tempBbl->addInstruction(*tempInstr);
             }
             //if global, add to glob list
             //otherwise just add instruction to Bbl list

@@ -17,6 +17,9 @@ private:
     std::string getDest(std::string line);
     std::vector<std::string> getParams(std::string line);
     std::vector<std::string> getArithArgs(std::string line);
+    std::vector<std::string> getLoadArgs(std::string line);
+    std::vector<std::string> getStoreArgs(std::string line);
+    std::string getAllocDest(std::string line);
 
 };
 

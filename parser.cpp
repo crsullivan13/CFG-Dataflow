@@ -31,6 +31,11 @@ Instruction* Parser::parseLine(std::string line, int num) {
         instr = new Instruction{InstructionType::CLOSING_BRACKET};
         }
         break;
+    case 's': {
+        std::vector<std::string> args = getStoreArgs(trimmed);
+        instr = new Store{InstructionType::STORE, args[1], args[0], num};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }
@@ -49,12 +54,18 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     {
     case 'c': {
         std::vector<std::string> params = getParams(line);
-        instr = new Call{InstructionType::CALL, params, num};
+        std::string name = getFuncName(line);
+        instr = new Call{InstructionType::CALL, name, params, num};
         }
         break;
     case 'a': {
-        std::vector<std::string> args = getArithArgs(line);
-        instr = new Arithmetic{InstructionType::ADD, args[0], args[1], args[2], num};
+            if ( line[index+1] == 'd' ) {
+                std::vector<std::string> args = getArithArgs(line);
+                instr = new Arithmetic{InstructionType::ADD, args[0], args[1], args[2], num};
+            } else if ( line[index+1] == 'l' ) {
+                std::string dest = getAllocDest(line);
+                instr = new Alloca{InstructionType::ALLOCA, dest, num};
+            }
         }
         break;
     case 'm': {
@@ -83,6 +94,11 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         instr = new Icmp{InstructionType::ICMP, dest, num};
         }
         break;
+    case 'l': {
+        std::vector<std::string> args = getLoadArgs(line);
+        instr = new Load{InstructionType::LOAD, args[1], args[0], num};
+        }
+        break;
     default: {
         instr = new Instruction{};
         }
@@ -90,6 +106,60 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     }
 
     return instr;
+}
+
+std::string Parser::getAllocDest(std::string line) {
+    std::string dest;
+
+    for ( size_t i = 1; line[i] != ' '; i++ ) {
+        dest += line[i];
+    }
+
+    std::cout << dest << "\n";
+    return dest; 
+}
+
+std::vector<std::string> Parser::getStoreArgs(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    if ( tokens[2][0] == '%' ) {
+        tokens[2] = tokens[2].substr(1, tokens[2].size()-2);
+    } else {
+        tokens[2] = tokens[2].substr(0, tokens[2].size()-1);
+    }
+    args.push_back(tokens[2]);
+    args.push_back(tokens[4].substr(1, tokens[4].size()-2));
+
+    std::cout << args[0] << " " << args[1] <<"\n";
+    return args;
+}
+
+std::vector<std::string> Parser::getLoadArgs(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    args.push_back(tokens[0].substr(1, tokens[0].size()));
+    args.push_back(tokens[5].substr(1, tokens[5].size()-2));
+
+    std::cout << args[0] << " " << args[1] << "\n";
+    return args;
 }
 
 std::string Parser::getDest(std::string line) {
@@ -130,7 +200,7 @@ std::vector<std::string> Parser::getArithArgs(std::string line) {
     }
     args.push_back(tokens[5]);
 
-    //std::cout << args[0] << " " << args[1] << " " << args[2] << " " << "\n";
+    std::cout << args[0] << " " << args[1] << " " << args[2] << " " << "\n";
     return args;
 }
 
@@ -142,40 +212,58 @@ std::string Parser::getFuncName(std::string line) {
         name += line[i];
     }
 
+    std::cout << name << "\n";
     return name;
 }
 
 std::string Parser::getRetVal(std::string line) {
-    size_t index = line.find('%');
-    if ( index == std::string::npos ) {
-        return "";
-    }
-    std::string retVal;
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+    std::string temp;
 
-    for (size_t i = index+1; i < line.size(); i++ ) {
-        retVal += line[i];
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
     }
 
-    return retVal;
+    temp = tokens[2][0] == '%' ? tokens[2].substr(1, tokens[2].size()) : tokens[2];
+
+    std::cout << temp << "\n";
+    return temp;
 }
 
 std::vector<std::string> Parser::getParams(std::string line) {
     size_t index = line.find('(');
     std::string paramStr = line.substr(index, line.size());
 
+    std::vector<std::string> tokens;
     std::vector<std::string> params{};
+    std::string temp;
 
-    for ( size_t i = 0; i < paramStr.size(); i++ ) {
-        if ( paramStr[i] == '%' ) {
-            std::string temp;
-            size_t j = 0;
-            for ( j = i+1; paramStr[j] != ',' && paramStr[j] != ')'; j++) {
-                temp += paramStr[j];
+    std::stringstream stream(paramStr);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    if ( tokens.size() > 0 ) {
+        for ( size_t i = 1; i < tokens.size(); i+=2 ) {
+            if ( tokens[i][0] == '%' ) {
+                params.push_back(tokens[i].substr(1, tokens[i].size()-2));
+            } else {
+                params.push_back(tokens[i].substr(0, tokens[i].size()-1));
             }
-            std::cout << temp << "\n";
-            params.push_back(temp);
-            i = j;
         }
+    }
+
+    if ( params.size() != 0 ) {
+        for ( size_t i = 0; i < params.size(); i++ ) {
+            std::cout << params[i] << " ";
+        }
+        std::cout << "\n";
+    } else {
+        std::cout << "No args\n";
     }
 
     return params;

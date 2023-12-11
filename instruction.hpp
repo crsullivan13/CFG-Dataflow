@@ -39,9 +39,13 @@ protected:
 
 class Alloca : public Instruction {
 public:
+    Alloca(InstructionType type, std::string dest, int bblNumber) : mType{type}, mDest{dest}, mBblNumber{bblNumber} {};
 
 private:
+    Instruction mType;
+    std::string mDest;
     bool mIsTerm = false;
+    int mBblNumber;
 };
 
 class Load : public Instruction {
@@ -57,12 +61,12 @@ private:
 
 class Store : public Instruction {
 public:
-    Store(InstructionType type, std::string address, int bblNumber);
+    Store(InstructionType type, std::string address, std::string value, int bblNumber);
 
 private:
     bool mIsTerm = false;
     std::string mAddress;
-    int mVal;
+    std::string mVal;
     int mBblNumber;
 };
 
@@ -111,10 +115,11 @@ private:
 
 class Call : public Instruction {
 public:
-    Call(InstructionType type, std::vector<std::string> params, int bblNumber);
+    Call(InstructionType type, std::string funcName, std::vector<std::string> params, int bblNumber);
 
 private:
     std::vector<std::string> mParams;
+    std::string mFuncName;
     bool mIsTerm;
     int mBblNumber;
 };

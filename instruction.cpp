@@ -14,10 +14,11 @@ Load::Load(InstructionType type, std::string address, std::string dest, int bblN
     mBblNumber = bblNumber;
 }
 
-Store::Store(InstructionType type, std::string address, int bblNumber) {
+Store::Store(InstructionType type, std::string address, std::string value, int bblNumber) {
     mType = type;
     mAddress = address;
     mBblNumber = bblNumber;
+    mVal = value;
 }
 
 Ret::Ret(InstructionType type, std::string op1, int bblNumber) {
@@ -47,11 +48,12 @@ Arithmetic::Arithmetic(InstructionType type, std::string dest, std::string op1, 
     mBblNumber = bblNumber;
 }
 
-Call::Call(InstructionType type, std::vector<std::string> params, int bblNumber) {
+Call::Call(InstructionType type, std::string funcName, std::vector<std::string> params, int bblNumber) {
     mType = type;
     mParams = params;
     mBblNumber = bblNumber;
     mIsTerm = true;
+    mFuncName = funcName;
 }
 
 Define::Define(InstructionType type, std::string funcName, int bblNumber) {
