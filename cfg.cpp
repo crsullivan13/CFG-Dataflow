@@ -106,6 +106,16 @@ bool CFG::analyzeBbl(Bbl* block) {
                 } else {
                     mMemory.updateSet(name, DataState::NOT_SECRET);
                 }
+            } else if ( tempType == InstructionType::PHI ) {
+                std::string dest = instr->getDest();
+                std::vector<std::string> params = instr->getParams();
+
+                block->mInSet.updateSet(dest, DataState::NOT_SECRET);
+                for ( auto param : params ) {
+                    if ( block->mInSet.getFact(param) == DataState::SECRET || mMemory.getFact(param) == DataState::SECRET ) {
+                        block->mInSet.updateSet(dest, DataState::SECRET);
+                    }
+                }
             }
         }
     }

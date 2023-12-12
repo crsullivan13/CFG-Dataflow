@@ -20,6 +20,7 @@ enum class InstructionType {
     CLOSING_BRACKET,
     LABEL,
     GLOBAL,
+    PHI,
 
     NONE
 };
@@ -44,6 +45,19 @@ public:
 protected:
     InstructionType mType;
     int mBblNumber;
+};
+
+class Phi : public Instruction {
+public:
+    Phi(InstructionType type, int bblNumber, std::string dest, std::vector<std::string> pairs) : Instruction(type, bblNumber), mDest{dest}, mPairs{pairs} {}
+    ~Phi(){};
+
+    std::string getDest() { return mDest; };
+    std::vector<std::string> getParams() { return mPairs; };
+private:
+    std::string mDest;
+    std::vector<std::string> mPairs;
+
 };
 
 class Global : public Instruction {

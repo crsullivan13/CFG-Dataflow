@@ -122,6 +122,12 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         instr = new Load{InstructionType::LOAD, num, args[1], args[0]};
         }
         break;
+    case 'p': {
+        std::vector<std::string> vals = getPhiVals(line);
+        std::string dest = getDest(line);
+        instr = new Phi{InstructionType::PHI, num, dest, vals};
+        }
+        break;
     default: {
         instr = new Instruction{InstructionType::NONE, 0};
         }
@@ -131,6 +137,40 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     return instr;
 }
 
+std::vector<std::string> Parser::getPhiVals(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    bool spaces = false;
+    for ( auto tok : tokens ) {
+        if ( tok[0] == '[' && tok.size() != 1 ) {
+            if ( tok[1] == '%' ) {
+                args.push_back(tok.substr(2, tok.size()-3));
+            } else {
+                args.push_back(tok.substr(1, tok.size()-2));
+            }
+        } else if ( tok[0] == '[') {
+            spaces = true;
+        } else if ( spaces == true && tok[0] != ' ' ) {
+            if ( tok[1] == '%' ) {
+                args.push_back(tok.substr(2, tok.size()-3));
+            } else {
+                args.push_back(tok.substr(1, tok.size()-2));
+            }
+            spaces = false;
+        }
+    }
+
+    return args;
+}
 
 std::vector<std::string> Parser::getIcmpArgs(std::string line) {
     std::vector<std::string> tokens;

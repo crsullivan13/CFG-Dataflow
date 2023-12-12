@@ -23,6 +23,7 @@ private:
     std::vector<std::string> getStoreArgs(std::string line);
     std::vector<std::string> getBranchDests(std::string line);
     std::vector<std::string> getIcmpArgs(std::string line);
+    std::vector<std::string> getPhiVals(std::string line);
     std::string getAllocDest(std::string line);
 
 };
