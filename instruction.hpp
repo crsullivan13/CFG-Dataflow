@@ -42,6 +42,8 @@ public:
 
     virtual std::string getValue() { return ""; };
     virtual std::vector<std::string> getParams() { std::vector<std::string> temp{}; return temp; };
+
+    virtual bool getDeclare() {return false;};
 protected:
     InstructionType mType;
     int mBblNumber;
@@ -182,12 +184,14 @@ private:
 
 class Define : public Instruction {
 public:
-    Define(InstructionType type, int bblNumber, std::string funcName) : Instruction(type, bblNumber), mFuncName{funcName} {}
+    Define(InstructionType type, int bblNumber, std::string funcName, bool isDeclare) : Instruction(type, bblNumber), mFuncName{funcName}, mIsDeclare(isDeclare) {}
     ~Define(){};
 
     std::string getName() { return mFuncName; };
+    bool getDeclare() { return mIsDeclare; };
 private:
     std::string mFuncName;
+    bool mIsDeclare;
 };
 
 #endif

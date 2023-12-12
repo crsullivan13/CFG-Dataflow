@@ -24,5 +24,4 @@ define i32 @main() {
     ret i32 0
 }
 
-define void @printResult(i32, double, i32, double) {
-}
+declare void @printResult(i32, double, i32, double)

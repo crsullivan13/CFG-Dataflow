@@ -83,10 +83,11 @@ bool CFG::analyzeBbl(Bbl* block) {
                 std::vector<int> temp = block->getSuccesors();
 
                 for ( auto succ : temp ) {
+                    if ( didLeak ) { break; };
                     for (auto innerBlock : mBlocks ) { //realizing too late that mBlocks should probably be a set, \O/
                         if ( succ == innerBlock->getBblNumber() ) {
                             innerBlock->mInSet.mergeSets(block->mOutSet);
-                            analyzeBbl(innerBlock);
+                            didLeak = analyzeBbl(innerBlock);
                             break;
                         }
                     }
@@ -102,9 +103,9 @@ bool CFG::analyzeBbl(Bbl* block) {
 
                 DataState temp = block->mInSet.getFact(value);
                 if ( temp == DataState::SECRET ) {
-                    mMemory.updateSet(name, temp);
+                    mMemory.updateSetStore(name, temp);
                 } else {
-                    mMemory.updateSet(name, DataState::NOT_SECRET);
+                    mMemory.updateSetStore(name, DataState::NOT_SECRET);
                 }
             } else if ( tempType == InstructionType::PHI ) {
                 std::string dest = instr->getDest();

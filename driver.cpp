@@ -61,6 +61,14 @@ void Driver::run() {
                 tempBbl = new Bbl(0);
                 tempBbl->addInstruction(tempInstr);
                 didBreak = false;
+
+                if ( tempInstr->getDeclare() ) {
+                    tempCfg->insertBlock(tempBbl);
+                    mCfgs.push_back(tempCfg);
+                    if ( mShouldOutputGraph ) {
+                        tempCfg->outputDigraph(mOutDirName);
+                    }
+                }
             } else if ( tempType == InstructionType::CLOSING_BRACKET ) {
                 if ( !didBreak ) {
                     tempCfg->insertBlock(tempBbl);
@@ -71,7 +79,7 @@ void Driver::run() {
                     tempCfg->outputDigraph(mOutDirName);
                 }
                 tempCfg->addGlobals(globList);
-                mCfgs.push_back(*tempCfg);
+                mCfgs.push_back(tempCfg);
             } else if ( tempType == InstructionType::BR || tempType == InstructionType::RET || tempType == InstructionType::CALL ) {
                 didBreak = true;
 
@@ -117,8 +125,8 @@ void Driver::run() {
         if ( mShouldDoDataFlow ) {
             //Do dataflow analysis
             bool leak = false;
-            for ( CFG& graph : mCfgs ) {
-                if ( graph.flowAnalysis() ) {
+            for ( auto graph : mCfgs ) {
+                if ( graph->flowAnalysis() ) {
                     leak = true;
                     std::cout << "LEAK\n";
                     break;

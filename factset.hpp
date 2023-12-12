@@ -17,6 +17,7 @@ public:
 
     DataState getFact(std::string name);
     DataState updateSet(std::string name, DataState state);
+    DataState updateSetStore(std::string name, DataState state);
     void mergeSets(Factset setToMerge);
 private:
     std::map<std::string, DataState> mFacts;

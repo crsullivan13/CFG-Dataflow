@@ -42,5 +42,4 @@ outer_loop_end:
     ret i32 0
 }
 
-declare void @print(i32, i32) {
-}
+declare void @print(i32, i32)

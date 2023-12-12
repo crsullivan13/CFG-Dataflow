@@ -20,7 +20,11 @@ Instruction* Parser::parseLine(std::string line, int num) {
     {
     case 'd': {
         std::string name = getFuncName(trimmed);
-        instr = new Define{InstructionType::DEFINE, num, name};
+        bool isDeclare = false;
+        if ( trimmed[2] == 'c' ) {
+            isDeclare = true;
+        }
+        instr = new Define{InstructionType::DEFINE, num, name, isDeclare};
         }
         break;
     case 'r': {
