@@ -9,6 +9,7 @@ class Driver {
 public:
     Driver();
     Driver(const char* inFileName, const char* outDirName, bool shouldOutputGraph, bool shouldDoDataflow);
+    ~Driver();
 
     void run();
 

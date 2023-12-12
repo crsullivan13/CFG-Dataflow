@@ -19,6 +19,10 @@ Driver::Driver(const char* inFileName, const char* outDirName, bool shouldOutput
     mShouldDoDataFlow = shouldDoDataflow;
 }
 
+Driver::~Driver() {
+
+}
+
 void Driver::run() {
     //std::cout << "Running...\n"; //TODO: make this blocked by debug flag
 

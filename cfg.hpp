@@ -9,6 +9,7 @@
 class CFG {
 public:
     CFG(std::string funcName) : mFuncName(funcName) {};
+    ~CFG();
 
     bool flowAnalysis();
 
@@ -33,10 +34,13 @@ public:
     };
 
 private:
+    bool analyzeBbl(Bbl* block);
+
     std::vector<Instruction> globList;
     std::string mFuncName;
     std::vector<Bbl*> mBlocks = {};
     std::map<std::string, int> mLabels = {};
+    Factset mMemory;
     int mBblCount = 0;
     
 };
