@@ -8,7 +8,7 @@ DataState Factset::getFact(std::string name) {
     }
 }
 
-void Factset::updateSet(std::string name, DataState state) {
+DataState Factset::updateSet(std::string name, DataState state) {
     DataState temp = getFact(name);
 
     if ( temp == DataState::NONE ) {
@@ -16,6 +16,9 @@ void Factset::updateSet(std::string name, DataState state) {
     } else if ( temp < state ) {
         mFacts[name] = state;
     }
+    temp = getFact(name);
+
+    return temp;
 }
 
 void Factset::mergeSets(Factset setToMerge) {

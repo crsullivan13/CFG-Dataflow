@@ -1,5 +1,5 @@
 CC=g++
-FLAGS = -Wall -g
+FLAGS = -Wall -g -O0
 
 analysis: main.o instruction.o driver.o cfg.o parser.o bbl.o factset.o
 	$(CC) $(FLAGS) -o analysis main.o instruction.o driver.o cfg.o parser.o bbl.o factset.o

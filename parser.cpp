@@ -7,7 +7,7 @@ Instruction* Parser::parseLine(std::string line, int num) {
     
     size_t index = line.find_first_not_of(" \t");
     if ( index == std::string::npos ) {
-        return new Instruction{};
+        return new Instruction{InstructionType::NONE, 0};
     }
     std::string trimmed = line.substr(index, line.size());
 
@@ -20,12 +20,12 @@ Instruction* Parser::parseLine(std::string line, int num) {
     {
     case 'd': {
         std::string name = getFuncName(trimmed);
-        instr = new Define{InstructionType::DEFINE, name, num};
+        instr = new Define{InstructionType::DEFINE, num, name};
         }
         break;
     case 'r': {
         std::string retVal = getRetVal(trimmed);
-        instr = new Ret{InstructionType::RET, retVal, num};
+        instr = new Ret{InstructionType::RET, num, retVal};
         }
         break;
     case '%': {
@@ -33,32 +33,32 @@ Instruction* Parser::parseLine(std::string line, int num) {
         }
         break;
     case '}': {
-        instr = new Instruction{InstructionType::CLOSING_BRACKET};
+        instr = new Instruction{InstructionType::CLOSING_BRACKET, num};
         }
         break;
     case 's': {
         std::vector<std::string> args = getStoreArgs(trimmed);
-        instr = new Store{InstructionType::STORE, args[1], args[0], num};
+        instr = new Store{InstructionType::STORE, num, args[1], args[0]};
         }
         break;
     case 'b': {
         std::vector<std::string> dests = getBranchDests(trimmed);
-        instr = new Br{InstructionType::BR, dests[0], dests[1], num};
+        instr = new Br{InstructionType::BR, num, dests[0], dests[1]};
         }
         break;
     case 'c': {
         std::vector<std::string> params = getParams(trimmed);
         std::string name = getFuncName(trimmed);
-        instr = new Call{InstructionType::CALL, name, params, "", num};
+        instr = new Call{InstructionType::CALL, num, name, params, ""};
         }
         break;
     case '@': {
         std::vector<std::string> args = parseGlob(trimmed);
-        instr = new Global{InstructionType::GLOBAL, args[0], args[1]};
+        instr = new Global{InstructionType::GLOBAL, 0, args[0], args[1]};
         }
         break;
     default: {
-        instr = new Instruction{};
+        instr = new Instruction{InstructionType::NONE, 0};
         }
         break;
     }
@@ -77,52 +77,53 @@ Instruction* Parser::parseAssign(std::string line, int num) {
         std::vector<std::string> params = getParams(line);
         std::string name = getFuncName(line);
         std::string dest = getAllocDest(line); //spahget1
-        instr = new Call{InstructionType::CALL, name, params, dest, num};
+        instr = new Call{InstructionType::CALL, num, name, params, dest};
         }
         break;
     case 'a': {
             if ( line[index+1] == 'd' ) {
                 std::vector<std::string> args = getArithArgs(line);
-                instr = new Arithmetic{InstructionType::ADD, args[0], args[1], args[2], num};
+                instr = new Arithmetic{InstructionType::ADD, num, args[0], args[1], args[2]};
             } else if ( line[index+1] == 'l' ) {
                 std::string dest = getAllocDest(line);
-                instr = new Alloca{InstructionType::ALLOCA, dest, num};
+                instr = new Alloca{InstructionType::ALLOCA, num, dest};
             }
         }
         break;
     case 'm': {
         std::vector<std::string> args = getArithArgs(line);
-        instr = new Arithmetic{InstructionType::MUL, args[0], args[1], args[2], num};
+        instr = new Arithmetic{InstructionType::MUL, num, args[0], args[1], args[2]};
         }
         break;
     case 's': {
             if ( line[index+1] == 'u' ) {
                 std::vector<std::string> args = getArithArgs(line);
-                instr = new Arithmetic{InstructionType::SUB, args[0], args[1], args[2], num};
+                instr = new Arithmetic{InstructionType::SUB, num, args[0], args[1], args[2]};
             } else if ( line[index+1] == 'd' ) {
                 std::vector<std::string> args = getArithArgs(line);
-                instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
+                instr = new Arithmetic{InstructionType::DIV, num, args[0], args[1], args[2]};
             }
         }
         break;
     case 'u': {
         std::vector<std::string> args = getArithArgs(line);
-        instr = new Arithmetic{InstructionType::DIV, args[0], args[1], args[2], num};
+        instr = new Arithmetic{InstructionType::DIV, num, args[0], args[1], args[2]};
         }
         break;
     case 'i': {
         std::string dest = getDest(line);
         //std::cout << dest << "\n";
-        instr = new Icmp{InstructionType::ICMP, dest, num};
+        std::vector<std::string> args = getIcmpArgs(line);
+        instr = new Icmp{InstructionType::ICMP, num, dest, args[0], args[1]};
         }
         break;
     case 'l': {
         std::vector<std::string> args = getLoadArgs(line);
-        instr = new Load{InstructionType::LOAD, args[1], args[0], num};
+        instr = new Load{InstructionType::LOAD, num, args[1], args[0]};
         }
         break;
     default: {
-        instr = new Instruction{};
+        instr = new Instruction{InstructionType::NONE, 0};
         }
         break;
     }
@@ -130,6 +131,32 @@ Instruction* Parser::parseAssign(std::string line, int num) {
     return instr;
 }
 
+
+std::vector<std::string> Parser::getIcmpArgs(std::string line) {
+    std::vector<std::string> tokens;
+    std::vector<std::string> args;
+
+    std::string temp;
+
+    std::stringstream stream(line);
+
+    while ( std::getline(stream, temp, ' ') ) {
+        tokens.push_back(temp);
+    }
+
+    if ( tokens[5][0] == '%' ) {
+        args.push_back(tokens[5].substr(1, tokens[5].size()-2));
+    } else {
+        args.push_back(tokens[5].substr(0, tokens[5].size()-1));
+    }
+
+    if ( tokens[6][0] == '%' ) {
+        args.push_back(tokens[6].substr(1, tokens[6].size()-2));
+    } else {
+        args.push_back(tokens[6].substr(0, tokens[6].size()-1));
+    }
+    return args;
+}
 
 std::vector<std::string> Parser::parseGlob(std::string line) {
     std::vector<std::string> tokens;
@@ -164,7 +191,7 @@ Instruction* Parser::parseLabel(std::string line, int num) {
         }
     }
 
-    instr = new LabelInstr{InstructionType::LABEL, temp, num};
+    instr = new LabelInstr{InstructionType::LABEL, num, temp};
     return instr;
 }
 

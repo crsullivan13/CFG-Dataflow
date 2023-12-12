@@ -10,8 +10,10 @@ class CFG {
 public:
     CFG(std::string funcName) : mFuncName(funcName) {};
 
+    bool flowAnalysis();
+
     void insertEdge(int sourceId, int successorId);
-    void insertBlock(Bbl block);
+    void insertBlock(Bbl* block);
 
     void printGraph();
     void outputDigraph(std::string outDir);
@@ -33,7 +35,7 @@ public:
 private:
     std::vector<Instruction> globList;
     std::string mFuncName;
-    std::vector<Bbl> mBlocks = {};
+    std::vector<Bbl*> mBlocks = {};
     std::map<std::string, int> mLabels = {};
     int mBblCount = 0;
     

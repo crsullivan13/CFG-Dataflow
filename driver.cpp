@@ -20,7 +20,7 @@ Driver::Driver(const char* inFileName, const char* outDirName, bool shouldOutput
 }
 
 void Driver::run() {
-    std::cout << "Running...\n"; //TODO: make this blocked by debug flag
+    //std::cout << "Running...\n"; //TODO: make this blocked by debug flag
 
     std::ifstream inFile(mInFileName);
     if ( !inFile.is_open() ) {
@@ -55,11 +55,11 @@ void Driver::run() {
             if ( tempType == InstructionType::DEFINE ) {
                 tempCfg = new CFG(tempInstr->getName());
                 tempBbl = new Bbl(0);
-                tempBbl->addInstruction(*tempInstr);
+                tempBbl->addInstruction(tempInstr);
                 didBreak = false;
             } else if ( tempType == InstructionType::CLOSING_BRACKET ) {
                 if ( !didBreak ) {
-                    tempCfg->insertBlock(*tempBbl);
+                    tempCfg->insertBlock(tempBbl);
                     didBreak = false;
                 }
 
@@ -72,8 +72,8 @@ void Driver::run() {
                 didBreak = true;
 
                 if ( tempType == InstructionType::BR ) {
-                    tempBbl->addInstruction(*tempInstr);
-                    tempCfg->insertBlock(*tempBbl);
+                    tempBbl->addInstruction(tempInstr);
+                    tempCfg->insertBlock(tempBbl);
 
                     std::string tgt1 = tempInstr->getTgt1();
                     int temp = tempCfg->findLabel(tempInstr->getTgt1());
@@ -93,23 +93,37 @@ void Driver::run() {
                         tempCfg->insertEdge(tempBbl->getBblNumber(), temp);
                     }
                 } else if ( tempType == InstructionType::RET ) {
-                    tempBbl->addInstruction(*tempInstr);
-                    tempCfg->insertBlock(*tempBbl);
+                    tempBbl->addInstruction(tempInstr);
+                    tempCfg->insertBlock(tempBbl);
                 } else if ( tempType == InstructionType::CALL ) {
-                    tempBbl->addInstruction(*tempInstr);
-                    tempCfg->insertBlock(*tempBbl);
+                    tempBbl->addInstruction(tempInstr);
+                    tempCfg->insertBlock(tempBbl);
                     tempCfg->insertEdge(tempBbl->getBblNumber(), tempCfg->incBblCount());
                 }
             } else if ( tempType == InstructionType::GLOBAL ) {
                 globList.push_back(*tempInstr);
             } else if ( tempType != InstructionType::NONE ) {
                 didBreak = false;
-                tempBbl->addInstruction(*tempInstr);
+                tempBbl->addInstruction(tempInstr);
             }
         }
 
-        //Do dataflow analysis
-
         inFile.close();
+
+        if ( mShouldDoDataFlow ) {
+            //Do dataflow analysis
+            bool leak = false;
+            for ( CFG& graph : mCfgs ) {
+                if ( graph.flowAnalysis() ) {
+                    leak = true;
+                    std::cout << "LEAK\n";
+                    break;
+                }
+            }
+
+            if ( !leak ) {
+                std::cout << "NO LEAK\n";
+            }
+        }
     }
 }

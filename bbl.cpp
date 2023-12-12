@@ -1,3 +1,7 @@
 #include "bbl.hpp"
 
-//Might need this for if I want to BBL printing, unused for now
+Bbl::~Bbl() {
+    for ( auto instr : mInstructions ) {
+        delete instr;
+    }
+}
