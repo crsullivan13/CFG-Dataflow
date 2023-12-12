@@ -1,0 +1,16 @@
+Generates CFGs and does light data flow analysis over those CFGs
+Uses a small subset of LLVM (of course including phi nodes and globals)
+    alloca
+    load
+    store
+    ret
+    icmp
+    br
+    add
+    sub
+    div
+    mul
+    call
+    define
+
+NOTES: some of the tests were generated using ChatGPT to get more permutations, the code is a mess and I need to fix it up
